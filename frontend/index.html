@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Supply Chain Dependency Tracker</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Supply Chain Dependency Tracker</h1>
+        <p>Supply Chain Risk & Dependency Analysis</p>
+    </header>
+
+    <main>
+
+        <section class="dashboard">
+
+            <div class="card">
+                <h3>Total Suppliers</h3>
+                <p id="supplierCount">--</p>
+            </div>
+
+            <div class="card">
+                <h3>Total Dependencies</h3>
+                <p id="dependencyCount">--</p>
+            </div>
+
+            <div class="card">
+                <h3>Cycles Detected</h3>
+                <p id="cycleCount">--</p>
+            </div>
+
+            <div class="card">
+                <h3>Critical Suppliers</h3>
+                <p id="criticalCount">--</p>
+            </div>
+
+        </section>
+
+
+        <section class="panel">
+
+            <h2>Supply Chain Analysis</h2>
+
+            <div class="buttons">
+
+                <button onclick="loadSuppliers()">
+                    View Suppliers
+                </button>
+
+                <button onclick="checkHealth()">
+                    Check Backend
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <section class="panel">
+
+            <h2>Results</h2>
+
+            <div id="results">
+                Click a button above to view results.
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
