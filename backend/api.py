@@ -47,3 +47,19 @@ def get_suppliers():
         "total_suppliers": len(suppliers),
         "suppliers": suppliers
     }
+@app.get("/dependencies")
+def get_dependencies():
+
+    dependencies = []
+
+    with open("data/dependencies.csv", "r", encoding="utf-8") as file:
+
+        reader = csv.DictReader(file)
+
+        for row in reader:
+            dependencies.append(row)
+
+    return {
+        "total_dependencies": len(dependencies),
+        "dependencies": dependencies
+    }
