@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import csv
 
 app = FastAPI(
     title="Supply Chain Dependency Tracker",
@@ -27,4 +28,22 @@ def home():
 def health():
     return {
         "status": "OK"
+    }
+
+
+@app.get("/suppliers")
+def get_suppliers():
+
+    suppliers = []
+
+    with open("data/suppliers.csv", "r", encoding="utf-8") as file:
+
+        reader = csv.DictReader(file)
+
+        for row in reader:
+            suppliers.append(row)
+
+    return {
+        "total_suppliers": len(suppliers),
+        "suppliers": suppliers
     }
