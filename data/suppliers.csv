@@ -1,11 +1,64 @@
-id,name,tier
-S1,Alpha Electronics,1
-S2,Beta Components,2
-S3,Gamma Plastics,2
-S4,Delta Motors,1
-S5,Epsilon Steel,2
-S6,Zeta Logistics,1
-S7,Eta Semiconductors,2
-S8,Theta Packaging,3
-S9,Iota Chemicals,2
-S10,Kappa Systems,1
+id,name,tier,has_backup
+"MFG+EA2:E55","Apex Motors (Main Manufacturer)",0,TRUE
+"BP","Battery Pack Division",1,TRUE
+"PT","Powertrain Systems",1,TRUE
+"CH","Chassis & Suspension Group",1,TRUE
+"EL","Electronics & Infotainment",1,TRUE
+"IN","Interior Systems",1,TRUE
+"BD","Body & Exterior",1,TRUE
+"BC","Battery Cell Manufacturing",2,FALSE
+"BMS","Battery Management System",2,TRUE
+"TC","Thermal Cooling Unit",2,TRUE
+"MOT","Electric Motor Assembly",2,FALSE
+"INV","Inverter Systems",2,TRUE
+"GB","Gearbox Unit",2,TRUE
+"SUS","Suspension Components",2,TRUE
+"BRK","Brake Systems",2,TRUE
+"WHL","Wheel & Tire Assembly",2,TRUE
+"PCB","Circuit Board Manufacturing",2,FALSE
+"SEN","Sensor Array Supplier",2,TRUE
+"DIS","Display Panel Supplier",2,FALSE
+"SEAT","Seating Systems",2,TRUE
+"DASH","Dashboard Assembly",2,TRUE
+"UPH","Upholstery Fabric",2,TRUE
+"STL","Steel Stamping",2,TRUE
+"GLS","Glass Manufacturing",2,FALSE
+"PNT","Paint & Coating",2,TRUE
+"CATH","Cathode Material Supplier",3,FALSE
+"ANOD","Anode Material Supplier",3,TRUE
+"SEP","Separator Film Co",3,FALSE
+"MCU","Microcontroller Foundry",3,FALSE
+"PUMP","Coolant Pump Manufacturer",3,TRUE
+"HOSE","Hose & Fitting Supplier",3,TRUE
+"MAG","Rare Earth Magnet Supplier",3,FALSE
+"COP","Copper Winding Supplier",3,TRUE
+"CAP","Capacitor Supplier",3,TRUE
+"GEAR","Precision Gear Manufacturer",3,TRUE
+"BEAR","Bearing Supplier",3,TRUE
+"SPR","Spring Steel Supplier",3,TRUE
+"FORGE","Forging Company",3,TRUE
+"PAD","Brake Pad Supplier",3,TRUE
+"ROT","Rotor Casting Co",3,TRUE
+"TIRE","Tire Rubber Supplier",3,FALSE
+"RIM","Alloy Rim Casting",3,TRUE
+"SIL","Silicon Wafer Supply",3,FALSE
+"LAM","PCB Laminate Supplier",3,TRUE
+"LCD","LCD Panel Manufacturer",3,FALSE
+"TGL","Touch Glass Supplier",3,TRUE
+"FOAM","Foam Padding Supplier",3,TRUE
+"FRM","Seat Frame Metal Supplier",3,TRUE
+"PLAS","Plastic Molding Co",3,TRUE
+"FAB","Textile Fabric Mill",3,TRUE
+"DYE","Dye & Chemical Supplier",3,TRUE
+"IRON","Iron Ore Processor",3,TRUE
+"SAND","Silica Sand Processor",3,TRUE
+"RESIN","Resin & Chemical Supplier",3,TRUE
+"LITH","Lithium Mining Co",4,FALSE
+"COBALT","Cobalt Mining Co",4,FALSE
+"GRAPHITE","Graphite Supplier",4,TRUE
+"RAREEARTH","Rare Earth Ore Mine",4,FALSE
+"COPPERORE","Copper Ore Mine",4,TRUE
+"SILICA","Silica Quartz Mine",4,TRUE
+"IRONORE","Iron Ore Mine",4,TRUE
+"RUBBER","Natural Rubber Plantation",4,FALSE
+"PETRO","Petrochemical Refinery",4,TRUE
