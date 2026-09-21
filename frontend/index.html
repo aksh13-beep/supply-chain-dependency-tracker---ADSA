@@ -1,82 +1,234 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SupplyChain Intelligence</title>
 
-    <title>Supply Chain Dependency Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <header>
-        <h1>Supply Chain Dependency Tracker</h1>
-        <p>Supply Chain Risk & Dependency Analysis</p>
-    </header>
+<div class="app">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo">◈</div>
+            <div>
+                <b>SupplyChain</b>
+                <small>INTELLIGENCE</small>
+            </div>
+        </div>
+
+        <nav>
+            <a class="active" href="#overview">⌂ &nbsp; Overview</a>
+            <a href="#network">◎ &nbsp; Network</a>
+            <a href="#risks">◒ &nbsp; Risk Analysis</a>
+            <a href="#dependencies">↗ &nbsp; Dependencies</a>
+        </nav>
+
+        <div class="system">
+            <span></span>
+            <div>
+                <small>System status</small>
+                <b id="systemStatus">Checking...</b>
+            </div>
+        </div>
+    </aside>
+
 
     <main>
 
-        <section class="dashboard">
+        <header>
+            <span>WORKSPACE / <b>SUPPLY CHAIN OVERVIEW</b></span>
+            <button onclick="loadDashboard()">↻ Refresh</button>
+        </header>
 
-            <div class="card">
-                <h3>Total Suppliers</h3>
-                <p id="supplierCount">--</p>
+
+        <section class="hero" id="overview">
+
+            <div>
+                <label>DEPENDENCY INTELLIGENCE PLATFORM</label>
+
+                <h1>
+                    Understand your
+                    <em>supply network.</em>
+                </h1>
+
+                <p>
+                    Detect hidden dependencies, circular flows and critical
+                    suppliers before they become disruptions.
+                </p>
             </div>
 
-            <div class="card">
-                <h3>Total Dependencies</h3>
-                <p id="dependencyCount">--</p>
+            <div class="hero-art">
+                <div class="glow"></div>
+
+                <div class="node n1">MFG</div>
+                <div class="node n2">BP</div>
+                <div class="node n3">PT</div>
+                <div class="node n4">BC</div>
+                <div class="node n5">INV</div>
+                <div class="node n6">LITH</div>
+
+                <div class="edge e1"></div>
+                <div class="edge e2"></div>
+                <div class="edge e3"></div>
+                <div class="edge e4"></div>
+                <div class="edge e5"></div>
+
+                <small class="live">● LIVE NETWORK</small>
             </div>
 
-            <div class="card">
-                <h3>Cycles Detected</h3>
-                <p id="cycleCount">--</p>
+        </section>
+
+
+        <section class="stats">
+
+            <div class="stat">
+                <span>SUPPLIERS</span>
+                <strong id="supplierCount">--</strong>
+                <small>● Active network nodes</small>
             </div>
 
-            <div class="card">
-                <h3>Critical Suppliers</h3>
-                <p id="criticalCount">--</p>
+            <div class="stat cyan">
+                <span>DEPENDENCIES</span>
+                <strong id="dependencyCount">--</strong>
+                <small>● Directed relationships</small>
+            </div>
+
+            <div class="stat orange">
+                <span>CYCLES DETECTED</span>
+                <strong>02</strong>
+                <small>● Circular dependencies</small>
+            </div>
+
+            <div class="stat red">
+                <span>CRITICAL SUPPLIERS</span>
+                <strong>14</strong>
+                <small>● Requires attention</small>
             </div>
 
         </section>
 
 
-        <section class="panel">
+        <section class="grid" id="network">
 
-            <h2>Supply Chain Analysis</h2>
+            <div class="panel network">
 
-            <div class="buttons">
+                <div class="panel-title">
+                    <div>
+                        <label>NETWORK GRAPH</label>
+                        <h2>Dependency topology</h2>
+                    </div>
 
-                <button onclick="loadSuppliers()">
-                    View Suppliers
-                </button>
+                    <span class="badge">● LIVE</span>
+                </div>
 
-                <button onclick="checkHealth()">
-                    Check Backend
-                </button>
+                <div class="graph">
+
+                    <div class="g-node main">MFG<small>Manufacturer</small></div>
+                    <div class="g-node one">BP<small>Battery</small></div>
+                    <div class="g-node two">PT<small>Powertrain</small></div>
+                    <div class="g-node three">BC<small>Cell Supply</small></div>
+                    <div class="g-node four">INV<small>Inverter</small></div>
+                    <div class="g-node five">LITH<small>Raw Material</small></div>
+
+                    <i class="line a"></i>
+                    <i class="line b"></i>
+                    <i class="line c"></i>
+                    <i class="line d"></i>
+                    <i class="line e"></i>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel" id="risks">
+
+                <div class="panel-title">
+                    <div>
+                        <label>RISK INTELLIGENCE</label>
+                        <h2>Risk distribution</h2>
+                    </div>
+                </div>
+
+                <div class="risk">
+                    <div class="donut">
+                        <div>
+                            <b>72</b>
+                            <small>nodes</small>
+                        </div>
+                    </div>
+
+                    <div class="risk-list">
+                        <p><i class="r1"></i> Critical <b>14</b></p>
+                        <p><i class="r2"></i> High <b>21</b></p>
+                        <p><i class="r3"></i> Medium <b>18</b></p>
+                        <p><i class="r4"></i> Low <b>19</b></p>
+                    </div>
+                </div>
+
+                <div class="operational">
+                    Risk engine <b>● Operational</b>
+                </div>
 
             </div>
 
         </section>
 
 
-        <section class="panel">
+        <section class="panel table-panel" id="dependencies">
 
-            <h2>Results</h2>
+            <div class="panel-title">
+                <div>
+                    <label>DEPENDENCY MONITOR</label>
+                    <h2>Critical dependency flows</h2>
+                </div>
 
-            <div id="results">
-                Click a button above to view results.
+                <button onclick="loadDependencies()">Load latest</button>
             </div>
 
+            <table>
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Destination</th>
+                        <th>Weight</th>
+                        <th>Exposure</th>
+                    </tr>
+                </thead>
+
+                <tbody id="dependencyTable">
+                    <tr>
+                        <td>MFG</td>
+                        <td>BP</td>
+                        <td>10</td>
+                        <td><span class="medium">Moderate</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
         </section>
+
+
+        <footer>
+            <span>SupplyChain Intelligence Platform</span>
+            <span>Python • FastAPI • ADSA</span>
+        </footer>
 
     </main>
+</div>
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
-
 </html>
+```
