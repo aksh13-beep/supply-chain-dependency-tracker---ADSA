@@ -1,234 +1,643 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SupplyChain Intelligence</title>
+    <title>Apex SupplyChain Intelligence | Advanced Graph & Dependency Tracker</title>
+    <meta name="description" content="Enterprise supply chain dependency intelligence platform powered by ADSA graph algorithms, real-time cycle detection, single point of failure audits, and disruption simulation.">
 
+    <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Vis.js Network for interactive force-directed graph -->
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <!-- Core Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+<div class="app-layout">
 
-<div class="app">
-
-    <aside class="sidebar">
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar" id="mainSidebar">
         <div class="brand">
-            <div class="logo">◈</div>
-            <div>
-                <b>SupplyChain</b>
-                <small>INTELLIGENCE</small>
+            <div class="brand-icon">
+                <span class="glyph">◈</span>
+            </div>
+            <div class="brand-text">
+                <span class="brand-title">ApexChain</span>
+                <span class="brand-badge">INTELLIGENCE</span>
             </div>
         </div>
 
-        <nav>
-            <a class="active" href="#overview">⌂ &nbsp; Overview</a>
-            <a href="#network">◎ &nbsp; Network</a>
-            <a href="#risks">◒ &nbsp; Risk Analysis</a>
-            <a href="#dependencies">↗ &nbsp; Dependencies</a>
+        <div class="sidebar-section-label">OPERATIONS SUITE</div>
+        <nav class="nav-menu">
+            <button class="nav-item active" data-tab="overview" id="navOverview">
+                <span class="nav-icon">⌂</span>
+                <span class="nav-label">Executive Overview</span>
+            </button>
+            <button class="nav-item" data-tab="network" id="navNetwork">
+                <span class="nav-icon">◎</span>
+                <span class="nav-label">Network Topology</span>
+                <span class="nav-pill" id="navNodeCountPill">63</span>
+            </button>
+            <button class="nav-item" data-tab="risks" id="navRisks">
+                <span class="nav-icon">◒</span>
+                <span class="nav-label">Risk & SPOF Center</span>
+                <span class="nav-pill alert" id="navSpofPill">16</span>
+            </button>
+            <button class="nav-item" data-tab="simulator" id="navSimulator">
+                <span class="nav-icon">⚡</span>
+                <span class="nav-label">Disruption Sandbox</span>
+            </button>
+            <button class="nav-item" data-tab="directory" id="navDirectory">
+                <span class="nav-icon">↗</span>
+                <span class="nav-label">Supply Catalog</span>
+            </button>
         </nav>
 
-        <div class="system">
-            <span></span>
-            <div>
-                <small>System status</small>
-                <b id="systemStatus">Checking...</b>
+        <div class="sidebar-spacer"></div>
+
+        <!-- Quick Summary Mini Card in Sidebar -->
+        <div class="sidebar-card">
+            <div class="sc-header">
+                <span class="sc-dot"></span>
+                <span>SYSTEM INTEGRITY</span>
             </div>
+            <div class="sc-val" id="sidebarCycleStatus">2 Cycles Detected</div>
+            <p class="sc-desc">Topological build order blocked by circular dependencies.</p>
+            <button class="sc-action-btn" onclick="switchTab('risks')">View Bottlenecks →</button>
+        </div>
+
+        <!-- Connection Status Indicator -->
+        <div class="engine-status">
+            <div class="status-pulse" id="statusPulse"></div>
+            <div class="status-meta">
+                <div class="status-title">API Engine</div>
+                <div class="status-value" id="engineStatusLabel">Connecting...</div>
+            </div>
+            <button class="refresh-mini-btn" title="Refresh data" onclick="loadAllData()">↻</button>
         </div>
     </aside>
 
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
 
-    <main>
+        <!-- Top Navigation Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <div class="breadcrumb">
+                    <span class="bc-root">SUPPLY NETWORK</span>
+                    <span class="bc-sep">/</span>
+                    <span class="bc-current" id="activeBreadcrumb">Executive Overview</span>
+                </div>
+            </div>
 
-        <header>
-            <span>WORKSPACE / <b>SUPPLY CHAIN OVERVIEW</b></span>
-            <button onclick="loadDashboard()">↻ Refresh</button>
+            <div class="topbar-center">
+                <div class="global-search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="globalSearchInput" placeholder="Quick search suppliers, tiers, or components (e.g. SILICA, MCU, Battery)..." autocomplete="off">
+                    <div id="searchDropdown" class="search-dropdown hidden"></div>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <div class="topbar-pill">
+                    <span class="pill-dot"></span>
+                    <span id="topoStatusPill">Procurement: Cyclic</span>
+                </div>
+                <button class="primary-btn" onclick="loadAllData()">
+                    <span class="btn-icon">↻</span>
+                    <span>Sync Live Data</span>
+                </button>
+            </div>
         </header>
 
+        <!-- Main Body Tabs Container -->
+        <main class="content-container">
 
-        <section class="hero" id="overview">
-
-            <div>
-                <label>DEPENDENCY INTELLIGENCE PLATFORM</label>
-
-                <h1>
-                    Understand your
-                    <em>supply network.</em>
-                </h1>
-
-                <p>
-                    Detect hidden dependencies, circular flows and critical
-                    suppliers before they become disruptions.
-                </p>
-            </div>
-
-            <div class="hero-art">
-                <div class="glow"></div>
-
-                <div class="node n1">MFG</div>
-                <div class="node n2">BP</div>
-                <div class="node n3">PT</div>
-                <div class="node n4">BC</div>
-                <div class="node n5">INV</div>
-                <div class="node n6">LITH</div>
-
-                <div class="edge e1"></div>
-                <div class="edge e2"></div>
-                <div class="edge e3"></div>
-                <div class="edge e4"></div>
-                <div class="edge e5"></div>
-
-                <small class="live">● LIVE NETWORK</small>
-            </div>
-
-        </section>
-
-
-        <section class="stats">
-
-            <div class="stat">
-                <span>SUPPLIERS</span>
-                <strong id="supplierCount">--</strong>
-                <small>● Active network nodes</small>
-            </div>
-
-            <div class="stat cyan">
-                <span>DEPENDENCIES</span>
-                <strong id="dependencyCount">--</strong>
-                <small>● Directed relationships</small>
-            </div>
-
-            <div class="stat orange">
-                <span>CYCLES DETECTED</span>
-                <strong>02</strong>
-                <small>● Circular dependencies</small>
-            </div>
-
-            <div class="stat red">
-                <span>CRITICAL SUPPLIERS</span>
-                <strong>14</strong>
-                <small>● Requires attention</small>
-            </div>
-
-        </section>
-
-
-        <section class="grid" id="network">
-
-            <div class="panel network">
-
-                <div class="panel-title">
-                    <div>
-                        <label>NETWORK GRAPH</label>
-                        <h2>Dependency topology</h2>
-                    </div>
-
-                    <span class="badge">● LIVE</span>
-                </div>
-
-                <div class="graph">
-
-                    <div class="g-node main">MFG<small>Manufacturer</small></div>
-                    <div class="g-node one">BP<small>Battery</small></div>
-                    <div class="g-node two">PT<small>Powertrain</small></div>
-                    <div class="g-node three">BC<small>Cell Supply</small></div>
-                    <div class="g-node four">INV<small>Inverter</small></div>
-                    <div class="g-node five">LITH<small>Raw Material</small></div>
-
-                    <i class="line a"></i>
-                    <i class="line b"></i>
-                    <i class="line c"></i>
-                    <i class="line d"></i>
-                    <i class="line e"></i>
-
-                </div>
-
-            </div>
-
-
-            <div class="panel" id="risks">
-
-                <div class="panel-title">
-                    <div>
-                        <label>RISK INTELLIGENCE</label>
-                        <h2>Risk distribution</h2>
-                    </div>
-                </div>
-
-                <div class="risk">
-                    <div class="donut">
-                        <div>
-                            <b>72</b>
-                            <small>nodes</small>
+            <!-- TAB 1: EXECUTIVE OVERVIEW -->
+            <section id="tab-overview" class="tab-pane active">
+                
+                <!-- Hero Section -->
+                <div class="hero-card">
+                    <div class="hero-left">
+                        <div class="hero-tag">ADSA GRAPH ANALYTICS • MULTI-TIER RESILIENCE</div>
+                        <h1 class="hero-heading">
+                            High-Precision <br>
+                            <span class="gradient-text">Supply Network Intelligence.</span>
+                        </h1>
+                        <p class="hero-subtitle">
+                            Real-time graph traversal, Dijkstra-weighted lead times, circular flow deadlock diagnostics, and automated Single Point of Failure (SPOF) risk mitigation.
+                        </p>
+                        <div class="hero-actions">
+                            <button class="btn-gradient" onclick="switchTab('simulator')">
+                                <span>⚡ Launch Disruption Simulator</span>
+                            </button>
+                            <button class="btn-outline" onclick="switchTab('network')">
+                                <span>Explore Network Map (63 Nodes)</span>
+                            </button>
                         </div>
                     </div>
 
-                    <div class="risk-list">
-                        <p><i class="r1"></i> Critical <b>14</b></p>
-                        <p><i class="r2"></i> High <b>21</b></p>
-                        <p><i class="r3"></i> Medium <b>18</b></p>
-                        <p><i class="r4"></i> Low <b>19</b></p>
+                    <div class="hero-right">
+                        <div class="hero-stat-box">
+                            <div class="hsb-title">Active Graph Topology</div>
+                            <div class="hsb-metric">
+                                <span id="heroSupplierCount">63</span>
+                                <small>Nodes</small>
+                                <span class="hsb-divider">|</span>
+                                <span id="heroDepCount">76</span>
+                                <small>Edges</small>
+                            </div>
+                            <div class="hsb-bar-container">
+                                <div class="hsb-bar-label">
+                                    <span>Vulnerability Index</span>
+                                    <strong class="warn-color" id="heroVulnIndex">33% High/Crit</strong>
+                                </div>
+                                <div class="hsb-progress-bar">
+                                    <div class="hsb-prog-fill crit" style="width: 33%"></div>
+                                    <div class="hsb-prog-fill warn" style="width: 21%"></div>
+                                    <div class="hsb-prog-fill good" style="width: 46%"></div>
+                                </div>
+                            </div>
+                            <div class="hsb-tags">
+                                <span class="hsb-tag crit">16 SPOFs Active</span>
+                                <span class="hsb-tag warn">2 Deadlock Cycles</span>
+                                <span class="hsb-tag normal">Avg 27.1d Lead Time</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="operational">
-                    Risk engine <b>● Operational</b>
+                <!-- 4 KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card" onclick="switchTab('network')">
+                        <div class="kpi-header">
+                            <span class="kpi-label">SUPPLIER NODES</span>
+                            <span class="kpi-badge info">Tier 0 - 4</span>
+                        </div>
+                        <div class="kpi-value" id="kpiSuppliers">63</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-sub">Apex Motors (MFG) root + 62 suppliers</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card" onclick="switchTab('network')">
+                        <div class="kpi-header">
+                            <span class="kpi-label">DEPENDENCY EDGES</span>
+                            <span class="kpi-badge cyan">Directed Graph</span>
+                        </div>
+                        <div class="kpi-value cyan" id="kpiDependencies">76</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-sub">Sparse Adjacency List O(V + E)</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card" onclick="switchTab('risks')">
+                        <div class="kpi-header">
+                            <span class="kpi-label">CIRCULAR FLOWS</span>
+                            <span class="kpi-badge warn">3-Color DFS</span>
+                        </div>
+                        <div class="kpi-value warn" id="kpiCycles">02</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-sub alert-text">BMS ⇄ TC & MOT ⇄ INV loops</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card" onclick="switchTab('risks')">
+                        <div class="kpi-header">
+                            <span class="kpi-label">SINGLE POINTS OF FAILURE</span>
+                            <span class="kpi-badge crit">No Backup</span>
+                        </div>
+                        <div class="kpi-value crit" id="kpiSpofs">16</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-sub alert-text">Immediate dual-sourcing needed</span>
+                        </div>
+                    </div>
                 </div>
 
-            </div>
+                <!-- Quick Overview Dual Panel -->
+                <div class="dual-panel-grid">
+                    
+                    <!-- Left: Interactive Mini Network Preview -->
+                    <div class="panel-card">
+                        <div class="panel-head">
+                            <div>
+                                <div class="panel-kicker">TOPOLOGY PREVIEW</div>
+                                <h3 class="panel-title">Multi-Tier Dependency Graph</h3>
+                            </div>
+                            <button class="panel-action-btn" onclick="switchTab('network')">Expand Fullscreen ↗</button>
+                        </div>
+                        <div class="mini-network-container" id="overviewNetworkContainer">
+                            <div class="loading-spinner">Initializing network physics...</div>
+                        </div>
+                        <div class="panel-legend">
+                            <span class="leg-item"><i class="leg-dot mfg"></i> Tier 0 (Apex MFG)</span>
+                            <span class="leg-item"><i class="leg-dot spof"></i> SPOF (No Backup)</span>
+                            <span class="leg-item"><i class="leg-dot cycle"></i> In Cycle Loop</span>
+                            <span class="leg-item"><i class="leg-dot normal"></i> Stable Supplier</span>
+                        </div>
+                    </div>
 
-        </section>
+                    <!-- Right: Critical Vulnerability Radar -->
+                    <div class="panel-card">
+                        <div class="panel-head">
+                            <div>
+                                <div class="panel-kicker">VULNERABILITY AUDIT</div>
+                                <h3 class="panel-title">Risk Severity Breakdown</h3>
+                            </div>
+                            <span class="status-tag-active">● Active Watch</span>
+                        </div>
 
+                        <!-- Donut & Breakdown Chart -->
+                        <div class="donut-section">
+                            <div class="donut-chart-wrapper">
+                                <svg class="donut-svg" viewBox="0 0 100 100" id="riskDonutSvg">
+                                    <circle class="donut-ring" cx="50" cy="50" r="40" fill="transparent" stroke-width="12"></circle>
+                                    <circle class="donut-segment crit" id="donutCrit" cx="50" cy="50" r="40" fill="transparent" stroke-width="12"></circle>
+                                    <circle class="donut-segment high" id="donutHigh" cx="50" cy="50" r="40" fill="transparent" stroke-width="12"></circle>
+                                    <circle class="donut-segment med" id="donutMed" cx="50" cy="50" r="40" fill="transparent" stroke-width="12"></circle>
+                                    <circle class="donut-segment low" id="donutLow" cx="50" cy="50" r="40" fill="transparent" stroke-width="12"></circle>
+                                </svg>
+                                <div class="donut-center-text">
+                                    <strong id="donutTotalCount">63</strong>
+                                    <small>SUPPLIERS</small>
+                                </div>
+                            </div>
 
-        <section class="panel table-panel" id="dependencies">
+                            <div class="donut-legend-list">
+                                <div class="donut-item">
+                                    <div class="di-left"><span class="di-dot crit"></span> Critical Risk</div>
+                                    <div class="di-right"><strong id="riskCountCrit">21</strong> <small>nodes</small></div>
+                                </div>
+                                <div class="donut-item">
+                                    <div class="di-left"><span class="di-dot high"></span> High Impact</div>
+                                    <div class="di-right"><strong id="riskCountHigh">13</strong> <small>nodes</small></div>
+                                </div>
+                                <div class="donut-item">
+                                    <div class="di-left"><span class="di-dot med"></span> Medium Exposure</div>
+                                    <div class="di-right"><strong id="riskCountMed">22</strong> <small>nodes</small></div>
+                                </div>
+                                <div class="donut-item">
+                                    <div class="di-left"><span class="di-dot low"></span> Low Risk</div>
+                                    <div class="di-right"><strong id="riskCountLow">7</strong> <small>nodes</small></div>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="panel-title">
-                <div>
-                    <label>DEPENDENCY MONITOR</label>
-                    <h2>Critical dependency flows</h2>
+                        <!-- Highest Blast Radius Alert Table -->
+                        <div class="top-spof-box">
+                            <div class="tsb-title">Highest Systemic Blast Radius:</div>
+                            <div class="tsb-list" id="overviewTopSpofList">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <button onclick="loadDependencies()">Load latest</button>
+            </section>
+
+            <!-- TAB 2: INTERACTIVE NETWORK TOPOLOGY -->
+            <section id="tab-network" class="tab-pane">
+                <div class="network-view-wrapper">
+                    
+                    <!-- Graph Controls Floating Bar -->
+                    <div class="graph-toolbar">
+                        <div class="gt-group">
+                            <label>FILTER TIER:</label>
+                            <select id="tierFilterSelect" onchange="filterNetworkGraph()">
+                                <option value="all">All Tiers (0 to 4)</option>
+                                <option value="0">Tier 0 (Apex MFG)</option>
+                                <option value="1">Tier 1 (Subsystems)</option>
+                                <option value="2">Tier 2 (Components)</option>
+                                <option value="3">Tier 3 (Subcomponents)</option>
+                                <option value="4">Tier 4 (Raw Materials)</option>
+                            </select>
+                        </div>
+
+                        <div class="gt-group">
+                            <label>FILTER RISK:</label>
+                            <select id="riskFilterSelect" onchange="filterNetworkGraph()">
+                                <option value="all">All Risk Classes</option>
+                                <option value="spof">Single Points of Failure (SPOF) Only</option>
+                                <option value="cycle">Nodes in Circular Cycles Only</option>
+                                <option value="critical">Critical & High Only</option>
+                            </select>
+                        </div>
+
+                        <div class="gt-group search-group">
+                            <input type="text" id="networkNodeSearch" placeholder="Focus node (e.g. MOT, SILICA)..." oninput="searchFocusNode(this.value)">
+                        </div>
+
+                        <div class="gt-actions">
+                            <button class="gt-btn" onclick="zoomNetwork(1.3)" title="Zoom in">+</button>
+                            <button class="gt-btn" onclick="zoomNetwork(0.7)" title="Zoom out">−</button>
+                            <button class="gt-btn" onclick="fitNetwork()" title="Fit to screen">⛶ Fit</button>
+                            <button class="gt-btn active" id="physicsToggleBtn" onclick="togglePhysics()" title="Toggle physics simulation">Physics</button>
+                        </div>
+                    </div>
+
+                    <!-- Main Canvas Container -->
+                    <div class="network-canvas-container" id="fullNetworkContainer">
+                        <div class="canvas-loading">Loading network canvas...</div>
+                    </div>
+
+                    <!-- Slide-over Node Inspector Drawer -->
+                    <div class="node-inspector-drawer" id="nodeInspectorDrawer">
+                        <div class="nid-header">
+                            <div>
+                                <span class="nid-badge" id="inspNodeTier">TIER 1</span>
+                                <h3 class="nid-title" id="inspNodeTitle">Select a Supplier</h3>
+                                <div class="nid-id" id="inspNodeId">ID: --</div>
+                            </div>
+                            <button class="nid-close-btn" onclick="closeInspector()">✕</button>
+                        </div>
+
+                        <div class="nid-body" id="inspNodeBody">
+                            <p class="nid-empty-tip">Click any node on the graph or in a catalog table to inspect lead-times, upstream dependencies, and downstream impact.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- TAB 3: RISK & SPOF AUDIT -->
+            <section id="tab-risks" class="tab-pane">
+                
+                <div class="risk-section-header">
+                    <div>
+                        <span class="panel-kicker">STRUCTURAL VULNERABILITY CENTER</span>
+                        <h2>Algorithmic Bottlenecks & Failure Audits</h2>
+                        <p>Detailed analysis of Circular Dependencies (3-Color DFS) and Single Points of Failure (SPOFs) with zero secondary sources.</p>
+                    </div>
+                </div>
+
+                <!-- Cycles Alert Banner -->
+                <div class="cycles-banner">
+                    <div class="cb-icon">⚠</div>
+                    <div class="cb-content">
+                        <h3>Critical Circular Dependencies Detected (2 Loops)</h3>
+                        <p>Circular dependencies create topological sort deadlocks where procurement order cannot be resolved. These require contract restructuring or decoupled buffering.</p>
+                        <div class="cycles-loop-cards" id="cyclesLoopCards">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SPOFs Table & Top Critical Nodes -->
+                <div class="spof-layout-grid">
+                    
+                    <!-- SPOF Table (16 items) -->
+                    <div class="panel-card flex-2">
+                        <div class="panel-head">
+                            <div>
+                                <div class="panel-kicker">PRIORITY 1 REMEDIATION</div>
+                                <h3 class="panel-title">16 Single Points of Failure (SPOF)</h3>
+                            </div>
+                            <span class="status-tag-crit">● No Backup Source</span>
+                        </div>
+                        
+                        <div class="table-scroll-wrapper">
+                            <table class="enterprise-table" id="spofFullTable">
+                                <thead>
+                                    <tr>
+                                        <th>Supplier ID</th>
+                                        <th>Name</th>
+                                        <th>Tier</th>
+                                        <th>Dependents Relying</th>
+                                        <th>Lead Time (MFG)</th>
+                                        <th>Downstream Impact</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="spofTableBody">
+                                    <!-- Injected dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Top Critical by Impact Score -->
+                    <div class="panel-card flex-1">
+                        <div class="panel-head">
+                            <div>
+                                <div class="panel-kicker">STRUCTURAL IMPORTANCE</div>
+                                <h3 class="panel-title">Top Impact Ranking</h3>
+                            </div>
+                        </div>
+                        <p class="panel-subtext">Ranked by total downstream suppliers impacted if disrupted (Reverse BFS count).</p>
+                        <div class="impact-rank-list" id="impactRankList">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- TAB 4: DISRUPTION SIMULATOR (WHAT-IF SANDBOX) -->
+            <section id="tab-simulator" class="tab-pane">
+                
+                <div class="simulator-header">
+                    <div class="panel-kicker">STRESS TESTING & RESILIENCE ENGINE</div>
+                    <h2>"What-If" Disruption Sandbox</h2>
+                    <p>Simulate factory shutdowns, geopolitical embargoes, or raw material halts. See immediate cascade blast radius across all tiers.</p>
+                </div>
+
+                <div class="sim-dashboard-grid">
+                    
+                    <!-- Simulation Setup Panel -->
+                    <div class="panel-card sim-config-card">
+                        <div class="panel-head">
+                            <div>
+                                <div class="panel-kicker">SIMULATION PARAMETERS</div>
+                                <h3 class="panel-title">Trigger Node Failure</h3>
+                            </div>
+                        </div>
+
+                        <div class="sim-form-group">
+                            <label>SELECT SUPPLIER TO DISRUPT:</label>
+                            <select id="simSupplierSelect" class="sim-select">
+                                <option value="">-- Choose Supplier Node --</option>
+                            </select>
+                        </div>
+
+                        <div class="sim-quick-picks">
+                            <label>QUICK TEST HIGH-RISK SPOFs:</label>
+                            <div class="quick-pick-buttons">
+                                <button class="qp-btn" onclick="setAndSimulate('SILICA')">⚡ SILICA (Mine)</button>
+                                <button class="qp-btn" onclick="setAndSimulate('MCU')">⚡ MCU (Foundry)</button>
+                                <button class="qp-btn" onclick="setAndSimulate('BC')">⚡ BC (Battery Cell)</button>
+                                <button class="qp-btn" onclick="setAndSimulate('MOT')">⚡ MOT (Motor)</button>
+                                <button class="qp-btn" onclick="setAndSimulate('GLS')">⚡ GLS (Glass)</button>
+                                <button class="qp-btn" onclick="setAndSimulate('LITH')">⚡ LITH (Lithium)</button>
+                            </div>
+                        </div>
+
+                        <button class="btn-gradient full-width mt-4" id="runSimulationBtn" onclick="runDisruptionSimulation()">
+                            <span>Simulate Disruption Blast Radius ⚡</span>
+                        </button>
+                    </div>
+
+                    <!-- Simulation Result Metrics Card -->
+                    <div class="panel-card sim-result-card" id="simResultCard">
+                        <div class="panel-head">
+                            <div>
+                                <div class="panel-kicker">SIMULATION OUTCOME</div>
+                                <h3 class="panel-title" id="simResultTitle">Awaiting Simulation Trigger...</h3>
+                            </div>
+                            <span class="status-tag-idle" id="simSeverityBadge">IDLE</span>
+                        </div>
+
+                        <div class="sim-kpi-row">
+                            <div class="sim-kpi-item">
+                                <span class="ski-label">AFFECTED SUPPLIERS</span>
+                                <strong class="ski-val" id="simAffectedCount">--</strong>
+                            </div>
+                            <div class="sim-kpi-item">
+                                <span class="ski-label">APEX MFG HALTED?</span>
+                                <strong class="ski-val" id="simMfgHalted">--</strong>
+                            </div>
+                            <div class="sim-kpi-item">
+                                <span class="ski-label">BACKUP CONTRACTED?</span>
+                                <strong class="ski-val" id="simBackupStatus">--</strong>
+                            </div>
+                            <div class="sim-kpi-item">
+                                <span class="ski-label">BYPASS ROUTES</span>
+                                <strong class="ski-val" id="simBypassCount">--</strong>
+                            </div>
+                        </div>
+
+                        <div class="sim-advice-box" id="simAdviceBox">
+                            Select a node on the left and run the simulation to analyze structural blast radius.
+                        </div>
+
+                        <div class="sim-affected-list-wrapper">
+                            <div class="sal-title">Downstream Disrupted Chain:</div>
+                            <div class="sal-list" id="simAffectedList">
+                                <span class="text-muted">No simulation active yet.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- TAB 5: SUPPLY CATALOG & DATA DIRECTORY -->
+            <section id="tab-directory" class="tab-pane">
+                
+                <div class="directory-header">
+                    <div>
+                        <span class="panel-kicker">DATA EXPLORER</span>
+                        <h2>Supply Chain Directory & Flow Matrix</h2>
+                        <p>Inspect all 63 active supplier facilities and 76 directed dependency pathways with weights and exposure classification.</p>
+                    </div>
+
+                    <div class="directory-tabs">
+                        <button class="dir-tab-btn active" id="dirTabSuppliers" onclick="toggleDirectoryView('suppliers')">Suppliers (63)</button>
+                        <button class="dir-tab-btn" id="dirTabDependencies" onclick="toggleDirectoryView('dependencies')">Dependencies (76)</button>
+                    </div>
+                </div>
+
+                <!-- Search & Filters for Catalog -->
+                <div class="catalog-filters-bar">
+                    <div class="cf-search">
+                        <span class="cf-icon">🔍</span>
+                        <input type="text" id="catalogSearchInput" placeholder="Filter by supplier ID, name, tier..." oninput="filterCatalogTable()">
+                    </div>
+                    <div class="cf-tier-filter">
+                        <select id="catalogTierFilter" onchange="filterCatalogTable()">
+                            <option value="all">All Tiers</option>
+                            <option value="0">Tier 0</option>
+                            <option value="1">Tier 1</option>
+                            <option value="2">Tier 2</option>
+                            <option value="3">Tier 3</option>
+                            <option value="4">Tier 4</option>
+                        </select>
+                    </div>
+                    <div class="cf-risk-filter">
+                        <select id="catalogRiskFilter" onchange="filterCatalogTable()">
+                            <option value="all">All Risk Levels</option>
+                            <option value="critical">Critical Only</option>
+                            <option value="high">High Only</option>
+                            <option value="spof">SPOF Only</option>
+                            <option value="cycle">Cycle Only</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Table 1: Suppliers Directory -->
+                <div class="panel-card" id="catalogSuppliersPanel">
+                    <div class="table-scroll-wrapper">
+                        <table class="enterprise-table" id="fullSuppliersTable">
+                            <thead>
+                                <tr>
+                                    <th>Supplier ID</th>
+                                    <th>Legal Name</th>
+                                    <th>Tier</th>
+                                    <th>Backup Source</th>
+                                    <th>Risk Classification</th>
+                                    <th>Lead Time from MFG</th>
+                                    <th>Upstream Deps</th>
+                                    <th>Downstream Rely</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="catalogSuppliersTbody">
+                                <!-- Injected dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Table 2: Dependencies Directory -->
+                <div class="panel-card hidden" id="catalogDependenciesPanel">
+                    <div class="table-scroll-wrapper">
+                        <table class="enterprise-table" id="fullDependenciesTable">
+                            <thead>
+                                <tr>
+                                    <th>Source Node</th>
+                                    <th>Destination Supplier</th>
+                                    <th>Relationship Flow</th>
+                                    <th>Lead Time (Days)</th>
+                                    <th>Cycle Edge?</th>
+                                    <th>Exposure Level</th>
+                                </tr>
+                            </thead>
+                            <tbody id="catalogDependenciesTbody">
+                                <!-- Injected dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- Executive Footer -->
+        <footer class="app-footer">
+            <div class="footer-left">
+                <span class="footer-brand">◈ Apex SupplyChain Intelligence Suite</span>
+                <span class="footer-sep">•</span>
+                <span class="footer-tech">Algorithms: Dijkstra • 3-Color DFS • Kahn's Topo • Reverse BFS</span>
             </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Source</th>
-                        <th>Destination</th>
-                        <th>Weight</th>
-                        <th>Exposure</th>
-                    </tr>
-                </thead>
-
-                <tbody id="dependencyTable">
-                    <tr>
-                        <td>MFG</td>
-                        <td>BP</td>
-                        <td>10</td>
-                        <td><span class="medium">Moderate</span></td>
-                    </tr>
-                </tbody>
-            </table>
-
-        </section>
-
-
-        <footer>
-            <span>SupplyChain Intelligence Platform</span>
-            <span>Python • FastAPI • ADSA</span>
+            <div class="footer-right">
+                <span class="footer-team">ADSA Project • Aksitha & Khyathi</span>
+                <span class="footer-sep">•</span>
+                <span class="footer-status" id="footerEngineStatus">Engine Status: Checking...</span>
+            </div>
         </footer>
 
-    </main>
+    </div>
 </div>
 
+<!-- Embedded Javascript -->
 <script src="script.js"></script>
-
 </body>
 </html>
-```
